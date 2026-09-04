@@ -35,4 +35,7 @@ The following variables will be created later:
 - Cancellation
 - Operational Adjustment
 - Financial Adjustment
+- Bad debt
+- Test transaction
+- Manual
 - Other
