@@ -143,24 +143,26 @@ The Streamlit application provides:
 
 ## Repository structure
 
+```text
 retail-financial-intelligence/
-├── dashboard/
-│   ├── app.py
-│   ├── pages/
-│   └── utils/
-├── data/
-│   ├── raw/                 # Local source data; normally not committed
-│   └── processed/           # Generated cleaned and analytical datasets
-├── models/                  # Fitted artifacts and model metadata
-├── notebooks/               # Cleaning, EDA, segmentation, basket, anomaly, forecast
-├── reports/
-│   ├── figures/
-│   └── tables/
-├── scripts/                 # Validation and reproducibility utilities
-├── src/                     # Reusable feature and modelling modules
-├── README.md
-├── requirements.txt
-└── requirements-dev.txt
+|-- dashboard/
+|   |-- app.py
+|   |-- pages/
+|   `-- utils/
+|-- data/
+|   |-- raw/                  # Local source data; not committed
+|   `-- processed/            # Generated analytical datasets
+|-- models/                   # Model artifacts and metadata
+|-- notebooks/                # Cleaning, EDA and modelling notebooks
+|-- reports/
+|   |-- figures/
+|   `-- tables/
+|-- scripts/                  # Validation and reproducibility utilities
+|-- src/                      # Reusable Python modules
+|-- README.md
+|-- requirements.txt
+`-- requirements-dev.txt
+```
 
 
 The future SQL phase will add `sql/schema.sql`, `sql/analytics_queries.sql`, and documented load scripts without replacing the validated flat-file pipeline immediately.
