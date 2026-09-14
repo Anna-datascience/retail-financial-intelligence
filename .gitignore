@@ -236,6 +236,14 @@ data/processed/
 # Saved models
 *.pkl
 *.joblib
+# Commit final RetailIQ model artifacts
+!models/
+!models/**/
+!models/customer_segmentation_pipeline.joblib
+!models/final_lstm_scaler.joblib
+!models/final_xgb_forecast_model.joblib
+!models/refit_xgb_forecast_model.joblib
+!models/anomaly_detection/isolation_forest_ensemble_v1.joblib
 
 # Environment/secrets
 .env

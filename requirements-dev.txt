@@ -1,0 +1,13 @@
+# RetailIQ notebook, modelling, and development dependencies
+# This includes all dashboard runtime dependencies.
+
+-r requirements.txt
+
+ipykernel
+jupyterlab
+mlxtend
+openpyxl
+scipy
+seaborn
+tensorflow
+xgboost

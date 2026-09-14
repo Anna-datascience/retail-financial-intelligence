@@ -1,0 +1,25 @@
+{
+    "model": "KMeans",
+    "n_clusters": 3,
+    "features": [
+        "Recency",
+        "Frequency",
+        "Monetary"
+    ],
+    "preprocessing": [
+        "Yeo-Johnson PowerTransformer",
+        "StandardScaler"
+    ],
+    "random_state": 42,
+    "n_init": 20,
+    "max_iter": 500,
+    "customers": 5839,
+    "inertia": 8146.4000320599125,
+    "sampled_silhouette": 0.4514679430571002,
+    "full_silhouette": 0.4520010200237982,
+    "cluster_names": {
+        "0": "Inactive / Low Frequency",
+        "1": "Active Core",
+        "2": "VIP / Strategic"
+    }
+}

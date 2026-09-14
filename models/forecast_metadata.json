@@ -1,0 +1,33 @@
+{
+    "forecast_grain": "daily",
+    "forecast_type": "rolling one-day-ahead",
+    "validation_start": "2011-06-01",
+    "test_start": "2011-09-01",
+    "test_end": "2011-11-30",
+    "partial_december_excluded": true,
+    "lstm_lookback_days": 30,
+    "lstm_selected_epochs": 72,
+    "selected_model": "Tuned XGBoost Raw Target",
+    "primary_selection_metric": "WAPEPercent",
+    "xgboost_parameters": {
+        "n_estimators": 300,
+        "learning_rate": 0.03,
+        "max_depth": 2,
+        "min_child_weight": 5
+    },
+    "deployment_model": "Tuned XGBoost Raw Target",
+    "historical_data_end": "2011-11-30",
+    "future_forecast_start": "2011-12-01",
+    "future_forecast_end": "2011-12-30",
+    "future_forecast_days": 30,
+    "forecast_strategy": "recursive multi-step",
+    "uncertainty_method": "10th and 90th percentiles of validation residuals",
+    "test_observations": 91,
+    "backtest_winner": "Tuned XGBoost Raw Target",
+    "baseline_model": "SameWeekday4WeekAverage",
+    "wape_improvement_over_baseline_percent": 18.793,
+    "future_forecast_model": "Tuned XGBoost Recursive Forecast",
+    "future_forecast_role": "Operational 30-day forecast",
+    "model_selection_note": "XGBoost achieved the best WAPE, MAE, RMSE and absolute bias on the final 91-day test period. The same-weekday model remains the business baseline.",
+    "currency": "GBP"
+}

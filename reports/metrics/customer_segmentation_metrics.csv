@@ -1,0 +1,9 @@
+Metric,Value
+Customers,5839.0
+Features,3.0
+Clusters,3.0
+Inertia,8146.4000320599125
+SampledSilhouetteScore,0.4514679430571002
+FullSilhouetteScore,0.4520010200237982
+SmallestClusterCustomers,36.0
+LargestClusterCustomers,3039.0
