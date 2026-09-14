@@ -143,26 +143,25 @@ The Streamlit application provides:
 
 ## Repository structure
 
-```text
 retail-financial-intelligence/
-â”œâ”€â”€ dashboard/
-â”‚   â”œâ”€â”€ app.py
-â”‚   â”œâ”€â”€ pages/
-â”‚   â””â”€â”€ utils/
-â”œâ”€â”€ data/
-â”‚   â”œâ”€â”€ raw/                 # local source data; normally not committed
-â”‚   â””â”€â”€ processed/           # generated cleaned and analytical datasets
-â”œâ”€â”€ models/                  # fitted artifacts and model metadata
-â”œâ”€â”€ notebooks/               # cleaning, EDA, segmentation, basket, anomaly, forecast
-â”œâ”€â”€ reports/
-â”‚   â”œâ”€â”€ figures/
-â”‚   â””â”€â”€ tables/
-â”œâ”€â”€ scripts/                 # validation and reproducibility utilities
-â”œâ”€â”€ src/                     # reusable feature and modelling modules
-â”œâ”€â”€ README.md
-â”œâ”€â”€ requirements.txt
-â””â”€â”€ requirements-dev.txt
-```
+├── dashboard/
+│   ├── app.py
+│   ├── pages/
+│   └── utils/
+├── data/
+│   ├── raw/                 # Local source data; normally not committed
+│   └── processed/           # Generated cleaned and analytical datasets
+├── models/                  # Fitted artifacts and model metadata
+├── notebooks/               # Cleaning, EDA, segmentation, basket, anomaly, forecast
+├── reports/
+│   ├── figures/
+│   └── tables/
+├── scripts/                 # Validation and reproducibility utilities
+├── src/                     # Reusable feature and modelling modules
+├── README.md
+├── requirements.txt
+└── requirements-dev.txt
+
 
 The future SQL phase will add `sql/schema.sql`, `sql/analytics_queries.sql`, and documented load scripts without replacing the validated flat-file pipeline immediately.
 
@@ -236,7 +235,7 @@ Keep `requirements.txt` as the readable direct-dependency list; use the lock sna
 ## Author
 
 **Annapoornam Karthikeyan**  
-Finance Ã— Data Science portfolio project
+
 
 ## Dataset citation
 
