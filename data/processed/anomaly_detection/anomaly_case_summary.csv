@@ -1,0 +1,7 @@
+HighestAlertPriority,CasePriority,PrimaryAlertCategory,BusinessOwner,Cases,Customers,CaseRevenue,AverageCaseRevenue,AverageAlertLines,AverageModelVotes,MaximumAnomalyScore
+1,P1 - Immediate review,Model and baseline anomaly,Finance and Operations,267,91,910036.1,3408.374906367041,7.853932584269663,2.28582232407295,5.001823806762696
+2,P2 - Financial review,Rule-only extreme,Finance Control,436,265,505145.07,1158.5896100917432,2.041284403669725,0.09021131761415063,3.650801992416382
+2,P2 - Financial review,Contextual model anomaly,Finance Analytics,81,49,57812.409999999996,713.7334567901235,2.3703703703703702,2.0101552885868426,4.19668345451355
+3,P3 - Monitor,Product novelty review,Merchandising,145,84,34796.98,239.97917241379312,1.8413793103448275,2.129410013879043,4.384318923950195
+3,P3 - Monitor,Limited customer context,Data Quality / Customer Operations,62,0,9302.16,150.03483870967742,2.2419354838709675,3.3750102224836804,4.11535382270813
+3,P3 - Monitor,New customer review,Customer Operations / Credit Control,18,15,2592.2599999999998,144.01444444444442,1.7222222222222223,2.567450485152971,3.9991035938262938
