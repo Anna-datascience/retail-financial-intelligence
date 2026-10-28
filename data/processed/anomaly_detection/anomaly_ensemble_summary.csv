@@ -1,0 +1,10 @@
+Metric,Value
+Development anomaly rate (%),1.0000369487469916
+Test anomalies,2737.0
+Test anomaly rate (%),1.4572540584285933
+Flagged invoices,616.0
+Overlap with seed 42,2366.0
+Jaccard with seed 42,0.7014527127186481
+Baseline coverage (%),49.30795847750865
+Anomalies supported by 3+ seeds,2565.0
+Anomalies supported by all seeds,1531.0

@@ -1,0 +1,7 @@
+Metric,Value
+Final model anomalies,2737
+Model-flagged invoices,616
+Baseline anomalies,1734
+Any-alert invoices,1009
+Unanimous model anomalies,1531
+Missing anomaly scores,0
