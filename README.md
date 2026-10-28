@@ -173,7 +173,29 @@ The Streamlit app has five pages:
 
 ---
 
-## Quick start
+```text
+retail-financial-intelligence/
+|-- dashboard/
+|   |-- app.py
+|   |-- pages/
+|   `-- utils/
+|-- data/
+|   |-- raw/                  # Local source data; not committed
+|   `-- processed/            # Generated analytical datasets
+|-- models/                   # Model artifacts and metadata
+|-- notebooks/                # Cleaning, EDA and modelling notebooks
+|-- reports/
+|   |-- figures/
+|   `-- tables/
+|-- scripts/                  # Validation and reproducibility utilities
+|-- src/                      # Reusable Python modules
+|-- README.md
+|-- requirements.txt
+`-- requirements-dev.txt
+```
+
+
+The future SQL phase will add `sql/schema.sql`, `sql/analytics_queries.sql`, and documented load scripts without replacing the validated flat-file pipeline immediately.
 
 Run from the repository root.
 
