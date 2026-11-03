@@ -268,13 +268,12 @@ with st.sidebar:
         "(GBP, £)"
     )
 
-    st.caption(
-        "Historical data ends: "
-        f"{forecast_metadata.get(
-            'historical_data_end',
-            'Not available'
-        )}"
+    historical_data_end = forecast_metadata.get(
+        "historical_data_end",
+        "Not available",
     )
+
+    st.caption(f"Historical data ends: {historical_data_end}")
 
 
 # --------------------------------------------------
