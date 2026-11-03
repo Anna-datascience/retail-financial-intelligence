@@ -231,7 +231,23 @@ env/
 
 # Data
 data/raw/
-data/processed/
+data/interim/
+data/processed/*
+!data/processed/customer_segments.csv.gz
+
+data/processed/eda/*
+!data/processed/eda/
+!data/processed/eda/product_lifecycle.csv
+
+data/processed/market_basket/*
+!data/processed/market_basket/
+!data/processed/market_basket/visualization_rules.csv
+!data/processed/market_basket/market_basket_summary.csv
+
+data/processed/anomaly_detection/*
+!data/processed/anomaly_detection/
+!data/processed/anomaly_detection/anomaly_*.csv
+!data/processed/anomaly_detection/anomaly_*.csv.gz
 
 # Saved models
 *.pkl

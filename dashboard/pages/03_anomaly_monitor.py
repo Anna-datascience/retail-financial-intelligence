@@ -457,51 +457,211 @@ st.plotly_chart(
     width="stretch",
 )
 
-
 # ---------------------------------------------------------
-# Score and financial exposure
+# Anomaly score and flagged revenue
 # ---------------------------------------------------------
 
-st.subheader("Anomaly score and financial exposure")
+import numpy as np
+import pandas as pd
+import plotly.express as px
+import streamlit as st
 
-score_chart = px.scatter(
-    invoice_cases,
-    x="MaximumAnomalyScore",
-    y="AlertRevenue",
-    size="AlertLines",
-    color="CasePriority",
-    color_discrete_map=PRIORITY_COLORS,
-    category_orders={
-        "CasePriority": PRIORITY_ORDER
-    },
-    opacity=0.65,
-    hover_data={
-        "CaseID": True,
-        "Invoice": True,
-        "CustomerID": True,
-        "PrimaryAlertCategory": True,
-        "BusinessOwner": True,
-        "AlertLineSharePercent": ":.1f",
-        "AverageModelVotes": ":.2f",
-    },
-    labels={
-        "MaximumAnomalyScore": (
-            "Maximum ensemble anomaly score"
-        ),
-        "AlertRevenue": "Alert revenue",
-        "CasePriority": "Priority",
-        "AlertLines": "Alert lines",
-    },
+st.subheader("Invoice review map: anomaly score and flagged revenue")
+
+revenue_scale = st.radio(
+    "Revenue scale",
+    ["Log-like", "Linear"],
+    horizontal=True,
+    key="anomaly_revenue_scale",
+    help=(
+        "Log-like spreads out smaller amounts while keeping zeros visible. "
+        "Linear shows the original differences in pounds."
+    ),
 )
 
-score_chart.update_layout(
-    legend_title_text=""
+# Use the existing filtered cases without changing the source dataframe.
+score_plot_df = invoice_cases.copy()
+
+for column in ["MaximumAnomalyScore", "AlertRevenue"]:
+    score_plot_df[column] = pd.to_numeric(
+        score_plot_df[column],
+        errors="coerce",
+    ).astype(float)
+
+valid_coordinates = (
+    np.isfinite(score_plot_df["MaximumAnomalyScore"])
+    & np.isfinite(score_plot_df["AlertRevenue"])
 )
 
-st.plotly_chart(
-    score_chart,
-    width="stretch",
-)
+invalid_count = int((~valid_coordinates).sum())
+
+if invalid_count:
+    st.warning(
+        f"{invalid_count:,} cases cannot be plotted because their "
+        "score or flagged revenue is missing or invalid."
+    )
+
+score_plot_df = score_plot_df.loc[valid_coordinates].copy()
+
+if score_plot_df.empty:
+    st.info("No cases available for the current filters.")
+
+else:
+    # Display identifiers as text, including missing customer IDs.
+    for column in ["CaseID", "Invoice", "CustomerID"]:
+        score_plot_df[column] = (
+            score_plot_df[column]
+            .astype("string")
+            .fillna("Unknown")
+        )
+
+    revenue = score_plot_df["AlertRevenue"]
+
+    if revenue_scale == "Log-like":
+        # Signed log1p: preserves zeros and the sign of negative amounts.
+        score_plot_df["_RevenueAxis"] = (
+            np.sign(revenue) * np.log10(1 + np.abs(revenue))
+        )
+        revenue_axis_title = "Flagged line revenue (£, log-like scale)"
+    else:
+        score_plot_df["_RevenueAxis"] = revenue
+        revenue_axis_title = "Flagged line revenue (£)"
+
+    score_chart = px.scatter(
+        score_plot_df,
+        x="MaximumAnomalyScore",
+        y="_RevenueAxis",
+        color="CasePriority",
+        color_discrete_map=PRIORITY_COLORS,
+        category_orders={"CasePriority": PRIORITY_ORDER},
+        hover_name="CaseID",
+        hover_data={
+            "_RevenueAxis": False,
+            "MaximumAnomalyScore": ":.3f",
+            "AlertRevenue": ":,.2f",
+            "Invoice": True,
+            "CustomerID": True,
+            "AlertLines": True,
+            "PrimaryAlertCategory": True,
+            "BusinessOwner": True,
+            "AlertLineSharePercent": ":.1f",
+            "AverageModelVotes": ":.2f",
+        },
+        labels={
+            "MaximumAnomalyScore": "Maximum ensemble anomaly score",
+            "_RevenueAxis": revenue_axis_title,
+            "AlertRevenue": "Flagged line revenue (£)",
+            "CasePriority": "Priority",
+            "CustomerID": "Customer",
+            "AlertLines": "Flagged lines",
+            "PrimaryAlertCategory": "Alert category",
+            "BusinessOwner": "Review owner",
+            "AlertLineSharePercent": "Flagged lines (%)",
+            "AverageModelVotes": "Average model votes",
+        },
+        template="plotly_white",
+        render_mode="svg",
+    )
+
+    # Equal-size dots make smaller cases easier to see.
+    score_chart.update_traces(
+        marker={
+            "size": 9,
+            "opacity": 0.70,
+            "line": {"width": 0.5, "color": "white"},
+        },
+    )
+
+    if revenue_scale == "Log-like":
+        # Tick positions are transformed; labels remain actual GBP amounts.
+        largest_amount = max(1.0, float(revenue.abs().max()))
+        max_power = max(1, int(np.ceil(np.log10(largest_amount))))
+
+        tick_amounts = np.r_[
+            0.0,
+            10.0 ** np.arange(1, max_power + 1),
+        ]
+
+        if revenue.lt(0).any():
+            tick_amounts = np.unique(
+                np.r_[-tick_amounts, tick_amounts]
+            )
+
+        score_chart.update_yaxes(
+            tickmode="array",
+            tickvals=(
+                np.sign(tick_amounts)
+                * np.log10(1 + np.abs(tick_amounts))
+            ),
+            ticktext=[
+                f"-£{abs(amount):,.0f}"
+                if amount < 0
+                else f"£{amount:,.0f}"
+                for amount in tick_amounts
+            ],
+        )
+    else:
+        score_chart.update_yaxes(
+            tickprefix="£",
+            tickformat=",.0f",
+        )
+
+    score_chart.update_layout(
+        height=540,
+        margin={"l": 75, "r": 30, "t": 85, "b": 65},
+        hovermode="closest",
+        hoverlabel={"font_size": 12},
+        legend={
+            "title_text": "",
+            "orientation": "h",
+            "yanchor": "bottom",
+            "y": 1.04,
+            "xanchor": "left",
+            "x": 0,
+        },
+    )
+
+    # Label only the two largest amounts within the current filters.
+    largest_cases = score_plot_df.nlargest(2, "AlertRevenue")
+
+    for position, (_, case) in enumerate(largest_cases.iterrows()):
+        score_chart.add_annotation(
+            x=case["MaximumAnomalyScore"],
+            y=case["_RevenueAxis"],
+            text=(
+                f"Invoice {case['Invoice']}<br>"
+                f"£{case['AlertRevenue']:,.0f}"
+            ),
+            showarrow=True,
+            arrowhead=2,
+            ax=-110,
+            ay=-35 if position == 0 else 40,
+            bgcolor="rgba(255,255,255,0.95)",
+            bordercolor="#CBD5E1",
+            borderpad=4,
+            font={"size": 11, "color": "#334155"},
+        )
+
+    st.plotly_chart(
+        score_chart,
+        width="stretch",
+        key="anomaly_score_revenue_chart",
+        config={"displaylogo": False},
+    )
+
+    st.caption(
+        "Each dot represents one invoice review case. Moving right means "
+        "a higher anomaly score; moving up means higher flagged line revenue. "
+        "Colour indicates review priority; dot size is constant. "
+        "Scores are not fraud probabilities, and flagged revenue is not "
+        "confirmed financial loss."
+    )
+
+    if revenue_scale == "Log-like":
+        st.caption(
+            "The log-like scale compresses large amounts and retains zeros. "
+            "Axis labels and hover details show the original GBP amounts."
+        )
 
 
 # ---------------------------------------------------------

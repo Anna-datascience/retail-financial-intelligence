@@ -1,0 +1,14 @@
+FileName,ArtifactType,Rows,RelativePath,FileSizeMB
+anomaly_test_line_scores.csv.gz,Dataset,187819.0,data\processed\anomaly_detection\anomaly_test_line_scores.csv.gz,9.289
+anomaly_flagged_lines.csv.gz,Dataset,3616.0,data\processed\anomaly_detection\anomaly_flagged_lines.csv.gz,0.189
+anomaly_invoice_cases.csv.gz,Dataset,1009.0,data\processed\anomaly_detection\anomaly_invoice_cases.csv.gz,0.07
+anomaly_case_summary.csv,Dataset,6.0,data\processed\anomaly_detection\anomaly_case_summary.csv,0.001
+anomaly_monthly_metrics.csv,Dataset,3.0,data\processed\anomaly_detection\anomaly_monthly_metrics.csv,0.0
+anomaly_candidate_results.csv,Dataset,6.0,data\processed\anomaly_detection\anomaly_candidate_results.csv,0.001
+anomaly_seed_stability.csv,Dataset,5.0,data\processed\anomaly_detection\anomaly_seed_stability.csv,0.001
+anomaly_ensemble_stability.csv,Dataset,5.0,data\processed\anomaly_detection\anomaly_ensemble_stability.csv,0.001
+anomaly_ensemble_summary.csv,Dataset,9.0,data\processed\anomaly_detection\anomaly_ensemble_summary.csv,0.0
+anomaly_line_validation.csv,Dataset,6.0,data\processed\anomaly_detection\anomaly_line_validation.csv,0.0
+anomaly_case_validation.csv,Dataset,7.0,data\processed\anomaly_detection\anomaly_case_validation.csv,0.0
+isolation_forest_ensemble_v1.joblib,Model package,,models\anomaly_detection\isolation_forest_ensemble_v1.joblib,5.051
+model_metadata.json,Model metadata,,models\anomaly_detection\model_metadata.json,0.002

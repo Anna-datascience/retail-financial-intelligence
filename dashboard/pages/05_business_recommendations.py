@@ -447,6 +447,44 @@ with customer_tab:
             ),
         },
     )
+st.subheader("Recommended business actions")
+
+recommendation_1, recommendation_2, recommendation_3 = (
+    st.columns(3)
+)
+
+with recommendation_1:
+    st.markdown(
+        """
+        **Inactive / Low Frequency**
+
+        - Run targeted win-back campaigns.
+        - Use low-cost reactivation offers.
+        - Monitor customers with historically high value.
+        """
+    )
+
+with recommendation_2:
+    st.markdown(
+        """
+        **Active Core**
+
+        - Strengthen loyalty and retention.
+        - Recommend complementary products.
+        - Encourage higher order frequency.
+        """
+    )
+
+with recommendation_3:
+    st.markdown(
+        """
+        **VIP / Strategic**
+
+        - Provide dedicated account support.
+        - Monitor customer concentration risk.
+        - Protect service quality and availability.
+        """
+    )
 
 
 # --------------------------------------------------

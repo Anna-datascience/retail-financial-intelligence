@@ -1,0 +1,2 @@
+EligibleBaskets,SelectedProducts,ProductPresences,MatrixDensityPercent,MinimumSupport,MinimumBasketCount,MinimumActionableConfidence,MinimumActionableLift,MaximumItemsetLength,FrequentItemsets,AssociationRulesGenerated,FinalActionableRules
+34497,1000,675889,1.9592689219352408,0.005,173,0.5,1.2,3,10157,6305,4048
