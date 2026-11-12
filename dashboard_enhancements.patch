@@ -1,0 +1,469 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index a5092d6..1f08ed2 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -25,3 +25,8 @@ jobs:
+ 
+       - name: Validate dashboard artifacts
+         run: python scripts/validate_dashboard_artifacts.py
++
++      - name: Dashboard smoke test
++        run: |
++          python -m pip install pytest
++          python -m pytest -q tests
+diff --git a/.streamlit/config.toml b/.streamlit/config.toml
+new file mode 100644
+index 0000000..c0ec8b1
+--- /dev/null
++++ b/.streamlit/config.toml
+@@ -0,0 +1,17 @@
++# RetailIQ Streamlit configuration
++[theme]
++base = "light"
++primaryColor = "#1F3864"
++backgroundColor = "#FFFFFF"
++secondaryBackgroundColor = "#F3F6FA"
++textColor = "#1B1B1B"
++font = "sans serif"
++
++[client]
++toolbarMode = "minimal"
++
++[browser]
++gatherUsageStats = false
++
++[server]
++headless = true
+diff --git a/README.md b/README.md
+index 46db53d..4bcefa4 100644
+--- a/README.md
++++ b/README.md
+@@ -176,7 +176,7 @@ The Streamlit app has five pages:
+ ```text
+ retail-financial-intelligence/
+ |-- dashboard/
+-|   |-- app.py
++|   |-- Home.py
+ |   |-- pages/
+ |   `-- utils/
+ |-- data/
+@@ -221,7 +221,7 @@ Validate the dashboard artifacts, then start the app:
+ 
+ ```bash
+ python scripts/validate_dashboard_artifacts.py
+-python -m streamlit run dashboard/app.py --browser.gatherUsageStats false
++python -m streamlit run dashboard/Home.py --browser.gatherUsageStats false
+ ```
+ 
+ If PowerShell blocks activation, select the interpreter in VS Code or call `.\.venv\Scripts\python.exe` directly.
+@@ -241,7 +241,7 @@ If PowerShell blocks activation, select the interpreter in VS Code or call `.\.v
+ 
+ ```text
+ retail-financial-intelligence/
+-├── dashboard/        # Streamlit app (app.py, pages/, utils/)
++├── dashboard/        # Streamlit app (Home.py, pages/, utils/)
+ ├── data/
+ │   ├── raw/          # Local source data (not committed)
+ │   └── processed/    # Generated analytical datasets
+@@ -253,6 +253,7 @@ retail-financial-intelligence/
+ │   ├── figures/
+ │   └── tables/
+ ├── scripts/          # Validation and reproducibility utilities
++├── tests/            # Dashboard smoke tests (run in CI)
+ ├── sql/              # PostgreSQL schema, load script and business queries
+ ├── src/              # Reusable Python modules
+ ├── requirements.txt
+@@ -302,7 +303,7 @@ psql -d retailiq -f sql/analytics_queries.sql
+ - [x] PostgreSQL star-style schema and reusable business queries (`sql/`)
+ - [ ] Database-backed dashboard loaders
+ - [x] CI check: artifact validation on every push
+-- [ ] Extend CI with a dashboard smoke test
++- [x] Dashboard smoke test in CI (every page renders without errors)
+ - [ ] Containerise with Docker
+ - [ ] Model and data-drift monitoring before any production use
+ 
+diff --git a/dashboard/app.py b/dashboard/Home.py
+similarity index 89%
+rename from dashboard/app.py
+rename to dashboard/Home.py
+index 037ff1e..4b18783 100644
+--- a/dashboard/app.py
++++ b/dashboard/Home.py
+@@ -38,6 +38,7 @@ from dashboard.utils.data_loader import (
+     load_market_basket_rules,
+     load_product_lifecycle,
+ )
++from dashboard.utils.ui import render_footer, show_load_error
+ 
+ 
+ # --------------------------------------------------
+@@ -82,11 +83,7 @@ except (
+     KeyError,
+     ValueError
+ ) as error:
+-    st.error(
+-        "RetailIQ analytical artifacts could "
+-        f"not be loaded: {error}"
+-    )
+-    st.stop()
++    show_load_error(error, "the dashboard data")
+ 
+ 
+ # --------------------------------------------------
+@@ -686,71 +683,57 @@ st.dataframe(
+ 
+ 
+ # --------------------------------------------------
+-# Module status
++# Explore the dashboard
+ # --------------------------------------------------
+ 
+-st.subheader("Platform modules")
++st.subheader("Explore the dashboard")
+ 
+-module_status = pd.DataFrame([
+-    {
+-        "Module": "Data Quality",
+-        "Method": (
+-            "Rule-based validation and audit flags"
+-        ),
+-        "Status": "Complete"
+-    },
+-    {
+-        "Module": "Customer Intelligence",
+-        "Method": (
+-            "RFM features and K-Means clustering"
+-        ),
+-        "Status": "Complete"
+-    },
+-    {
+-        "Module": "Product Intelligence",
+-        "Method": (
+-            "ABC analysis and product lifecycle"
+-        ),
+-        "Status": "Complete"
+-    },
+-    {
+-        "Module": "Market Basket",
+-        "Method": (
+-            "Association rules"
+-        ),
+-        "Status": "Complete"
+-    },
+-    {
+-        "Module": "Anomaly Detection",
+-        "Method": (
+-            "Isolation Forest ensemble and "
+-            "financial rules"
+-        ),
+-        "Status": "Complete"
+-    },
+-    {
+-        "Module": "Revenue Forecasting",
+-        "Method": (
+-            "Baseline, XGBoost and LSTM comparison"
+-        ),
+-        "Status": "Complete"
+-    },
+-    {
+-        "Module": "Business Recommendations",
+-        "Method": (
+-            "Cross-module decision layer"
+-        ),
+-        "Status": "Complete"
+-    }
+-])
++DASHBOARD_PAGES = [
++    (
++        "pages/01_customer_intelligence.py",
++        "Customer Intelligence",
++        "🎯",
++        "Which customers are valuable, active or inactive?",
++        "RFM features and K-Means segmentation",
++    ),
++    (
++        "pages/02_product_and_basket.py",
++        "Product and Basket",
++        "🛒",
++        "Which products drive revenue, sell together or look inactive?",
++        "ABC analysis, product lifecycle and association rules",
++    ),
++    (
++        "pages/03_anomaly_monitor.py",
++        "Anomaly Monitor",
++        "🚨",
++        "Which invoices need a financial or operational review first?",
++        "Isolation Forest ensemble and financial rules",
++    ),
++    (
++        "pages/04_revenue_forecast.py",
++        "Revenue Forecasting",
++        "📈",
++        "What daily revenue should the business expect over the next 30 days?",
++        "Same-weekday baseline, XGBoost and LSTM comparison",
++    ),
++    (
++        "pages/05_business_recommendations.py",
++        "Business Recommendations",
++        "💡",
++        "Which actions should Finance, Operations and Merchandising prioritise?",
++        "Cross-module decision layer",
++    ),
++]
++
++page_columns = st.columns(2)
++
++for position, (path, label, icon, question, method) in enumerate(DASHBOARD_PAGES):
++    with page_columns[position % 2]:
++        with st.container(border=True):
++            st.page_link(path, label=f"**{label}**", icon=icon)
++            st.write(question)
++            st.caption(f"Method: {method}")
+ 
+-st.dataframe(
+-    module_status,
+-    hide_index=True,
+-    width="stretch"
+-)
+ 
+-st.success(
+-    "RetailIQ analytical workflow and dashboard "
+-    "integration are complete."
+-)
+\ No newline at end of file
++render_footer()
+diff --git a/dashboard/pages/01_customer_intelligence.py b/dashboard/pages/01_customer_intelligence.py
+index 86ca683..9e69b0b 100644
+--- a/dashboard/pages/01_customer_intelligence.py
++++ b/dashboard/pages/01_customer_intelligence.py
+@@ -30,6 +30,7 @@ from dashboard.utils.data_loader import (
+     load_customer_segmentation_metrics,
+     load_customer_segments,
+ )
++from dashboard.utils.ui import render_footer, show_load_error
+ 
+ 
+ st.set_page_config(
+@@ -87,14 +88,7 @@ try:
+     )
+ 
+ except FileNotFoundError as error:
+-    st.error(str(error))
+-
+-    st.info(
+-        "Run the customer segmentation notebook "
+-        "and export its validated artifacts first."
+-    )
+-
+-    st.stop()
++    show_load_error(error, "the customer data")
+ 
+ 
+ # ---------------------------------------------------------
+@@ -553,4 +547,7 @@ with st.expander(
+         cluster_centres,
+         width="stretch",
+         hide_index=True,
+-    )
+\ No newline at end of file
++    )
++
++
++render_footer()
+diff --git a/dashboard/pages/02_product_and_basket.py b/dashboard/pages/02_product_and_basket.py
+index ca80dcc..ff42dfc 100644
+--- a/dashboard/pages/02_product_and_basket.py
++++ b/dashboard/pages/02_product_and_basket.py
+@@ -27,6 +27,7 @@ from dashboard.utils.data_loader import (
+     load_market_basket_summary,
+     load_product_lifecycle,
+ )
++from dashboard.utils.ui import render_footer, show_load_error
+ 
+ 
+ st.set_page_config(
+@@ -71,8 +72,7 @@ try:
+     )
+ 
+ except (FileNotFoundError, KeyError) as error:
+-    st.error(str(error))
+-    st.stop()
++    show_load_error(error, "the product and basket data")
+ 
+ 
+ try:
+@@ -786,4 +786,7 @@ with st.expander(
+             basket_summary,
+             width="stretch",
+             hide_index=True,
+-        )
+\ No newline at end of file
++        )
++
++
++render_footer()
+diff --git a/dashboard/pages/03_anomaly_monitor.py b/dashboard/pages/03_anomaly_monitor.py
+index 6c428b4..bbe527d 100644
+--- a/dashboard/pages/03_anomaly_monitor.py
++++ b/dashboard/pages/03_anomaly_monitor.py
+@@ -26,6 +26,7 @@ from dashboard.utils.data_loader import (
+     load_anomaly_invoice_cases,
+     load_anomaly_monthly_metrics,
+ )
++from dashboard.utils.ui import render_footer, show_load_error
+ 
+ 
+ st.set_page_config(
+@@ -80,8 +81,7 @@ try:
+     )
+ 
+ except (FileNotFoundError, KeyError) as error:
+-    st.error(str(error))
+-    st.stop()
++    show_load_error(error, "the anomaly data")
+ 
+ 
+ invoice_cases = invoice_cases.copy()
+@@ -872,4 +872,7 @@ st.download_button(
+         "retailiq_anomaly_review_queue.csv"
+     ),
+     mime="text/csv",
+-)
+\ No newline at end of file
++)
++
++
++render_footer()
+diff --git a/dashboard/pages/04_revenue_forecast.py b/dashboard/pages/04_revenue_forecast.py
+index ec399fc..6e6d3f9 100644
+--- a/dashboard/pages/04_revenue_forecast.py
++++ b/dashboard/pages/04_revenue_forecast.py
+@@ -23,6 +23,7 @@ from dashboard.utils.data_loader import (  # noqa: E402
+     load_forecast_test_predictions,
+     load_future_revenue_forecast,
+ )
++from dashboard.utils.ui import render_footer, show_load_error
+ 
+ 
+ # --------------------------------------------------
+@@ -35,8 +36,7 @@ try:
+     future_forecast = load_future_revenue_forecast()
+     forecast_metadata = load_forecast_metadata()
+ except (FileNotFoundError, KeyError, ValueError) as error:
+-    st.error(f"Revenue-forecasting artifacts could not be loaded: {error}")
+-    st.stop()
++    show_load_error(error, "the forecasting data")
+ 
+ if forecast_comparison.empty or test_predictions.empty or future_forecast.empty:
+     st.error("One or more forecasting artifacts are empty.")
+@@ -481,3 +481,6 @@ with details_tab:
+         file_name="retailiq_forecast_model_comparison.csv",
+         mime="text/csv",
+     )
++
++
++render_footer()
+diff --git a/dashboard/pages/05_business_recommendations.py b/dashboard/pages/05_business_recommendations.py
+index 3d5a969..8967776 100644
+--- a/dashboard/pages/05_business_recommendations.py
++++ b/dashboard/pages/05_business_recommendations.py
+@@ -23,6 +23,7 @@ from dashboard.utils.data_loader import (  # noqa: E402
+     load_market_basket_rules,
+     load_product_lifecycle,
+ )
++from dashboard.utils.ui import render_footer, show_load_error
+ 
+ 
+ # --------------------------------------------------
+@@ -38,8 +39,7 @@ try:
+     future_forecast = load_future_revenue_forecast()
+     forecast_metadata = load_forecast_metadata()
+ except (FileNotFoundError, KeyError, ValueError) as error:
+-    st.error(f"Business-recommendation data could not be loaded: {error}")
+-    st.stop()
++    show_load_error(error, "the recommendation data")
+ 
+ 
+ # --------------------------------------------------
+@@ -656,3 +656,6 @@ with forecast_tab:
+             ),
+         },
+     )
++
++
++render_footer()
+diff --git a/dashboard/utils/ui.py b/dashboard/utils/ui.py
+new file mode 100644
+index 0000000..5faed98
+--- /dev/null
++++ b/dashboard/utils/ui.py
+@@ -0,0 +1,44 @@
++"""Shared user-interface helpers for the RetailIQ dashboard."""
++
++from __future__ import annotations
++
++import logging
++
++import streamlit as st
++
++logger = logging.getLogger("retailiq")
++
++GITHUB_URL = "https://github.com/Anna-datascience/retail-financial-intelligence"
++LINKEDIN_URL = "https://www.linkedin.com/in/annapoornam-karthikeyan-168031124/"
++DATASET_URL = "https://doi.org/10.24432/C5CG6D"
++LICENCE_URL = "https://creativecommons.org/licenses/by/4.0/"
++
++
++def render_footer() -> None:
++    """Show data attribution, a usage note and author links at the end of a page."""
++    st.divider()
++    st.caption(
++        f"**Data:** [UCI Online Retail II]({DATASET_URL}) (Chen, 2012), "
++        f"licensed under [CC BY 4.0]({LICENCE_URL}). "
++        "Historical transactions from a UK online retailer, 2009-2011."
++    )
++    st.caption(
++        "Model outputs support decisions and do not replace expert review. "
++        "Anomaly cases are review candidates, not confirmed fraud."
++    )
++    st.caption(
++        "Built by **Annapoornam Karthikeyan** · "
++        f"[Source code on GitHub]({GITHUB_URL}) · "
++        f"[LinkedIn]({LINKEDIN_URL})"
++    )
++
++
++def show_load_error(error: Exception, what: str = "the dashboard data") -> None:
++    """Show a visitor-friendly message, log the technical details, and stop the page."""
++    logger.error("Could not load %s: %s", what, error, exc_info=error)
++    st.error(
++        f"Sorry, {what} could not be loaded. Please reload the page. "
++        "If the problem continues, please report it on GitHub."
++    )
++    st.caption(f"Error type: {type(error).__name__}")
++    st.stop()
+diff --git a/tests/test_dashboard_smoke.py b/tests/test_dashboard_smoke.py
+new file mode 100644
+index 0000000..7201605
+--- /dev/null
++++ b/tests/test_dashboard_smoke.py
+@@ -0,0 +1,19 @@
++"""Smoke test: every dashboard page must render without an exception or error box."""
++
++from pathlib import Path
++
++import pytest
++from streamlit.testing.v1 import AppTest
++
++ROOT = Path(__file__).resolve().parents[1]
++DASHBOARD = ROOT / "dashboard"
++
++ENTRY = next(p for p in (DASHBOARD / "Home.py", DASHBOARD / "app.py") if p.exists())
++PAGES = [ENTRY, *sorted((DASHBOARD / "pages").glob("*.py"))]
++
++
++@pytest.mark.parametrize("page", PAGES, ids=lambda p: p.name)
++def test_page_renders(page):
++    app = AppTest.from_file(str(page), default_timeout=120).run()
++    assert not app.exception, [e.value for e in app.exception]
++    assert not app.error, [e.value for e in app.error]

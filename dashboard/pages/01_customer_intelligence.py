@@ -30,6 +30,7 @@ from dashboard.utils.data_loader import (
     load_customer_segmentation_metrics,
     load_customer_segments,
 )
+from dashboard.utils.ui import render_footer, show_load_error
 
 
 st.set_page_config(
@@ -87,14 +88,7 @@ try:
     )
 
 except FileNotFoundError as error:
-    st.error(str(error))
-
-    st.info(
-        "Run the customer segmentation notebook "
-        "and export its validated artifacts first."
-    )
-
-    st.stop()
+    show_load_error(error, "the customer data")
 
 
 # ---------------------------------------------------------
@@ -554,3 +548,6 @@ with st.expander(
         width="stretch",
         hide_index=True,
     )
+
+
+render_footer()

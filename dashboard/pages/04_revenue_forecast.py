@@ -23,6 +23,7 @@ from dashboard.utils.data_loader import (  # noqa: E402
     load_forecast_test_predictions,
     load_future_revenue_forecast,
 )
+from dashboard.utils.ui import render_footer, show_load_error
 
 
 # --------------------------------------------------
@@ -35,8 +36,7 @@ try:
     future_forecast = load_future_revenue_forecast()
     forecast_metadata = load_forecast_metadata()
 except (FileNotFoundError, KeyError, ValueError) as error:
-    st.error(f"Revenue-forecasting artifacts could not be loaded: {error}")
-    st.stop()
+    show_load_error(error, "the forecasting data")
 
 if forecast_comparison.empty or test_predictions.empty or future_forecast.empty:
     st.error("One or more forecasting artifacts are empty.")
@@ -481,3 +481,6 @@ with details_tab:
         file_name="retailiq_forecast_model_comparison.csv",
         mime="text/csv",
     )
+
+
+render_footer()

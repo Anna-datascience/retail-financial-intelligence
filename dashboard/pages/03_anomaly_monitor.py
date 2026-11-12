@@ -26,6 +26,7 @@ from dashboard.utils.data_loader import (
     load_anomaly_invoice_cases,
     load_anomaly_monthly_metrics,
 )
+from dashboard.utils.ui import render_footer, show_load_error
 
 
 st.set_page_config(
@@ -80,8 +81,7 @@ try:
     )
 
 except (FileNotFoundError, KeyError) as error:
-    st.error(str(error))
-    st.stop()
+    show_load_error(error, "the anomaly data")
 
 
 invoice_cases = invoice_cases.copy()
@@ -873,3 +873,6 @@ st.download_button(
     ),
     mime="text/csv",
 )
+
+
+render_footer()

@@ -23,6 +23,7 @@ from dashboard.utils.data_loader import (  # noqa: E402
     load_market_basket_rules,
     load_product_lifecycle,
 )
+from dashboard.utils.ui import render_footer, show_load_error
 
 
 # --------------------------------------------------
@@ -38,8 +39,7 @@ try:
     future_forecast = load_future_revenue_forecast()
     forecast_metadata = load_forecast_metadata()
 except (FileNotFoundError, KeyError, ValueError) as error:
-    st.error(f"Business-recommendation data could not be loaded: {error}")
-    st.stop()
+    show_load_error(error, "the recommendation data")
 
 
 # --------------------------------------------------
@@ -656,3 +656,6 @@ with forecast_tab:
             ),
         },
     )
+
+
+render_footer()
