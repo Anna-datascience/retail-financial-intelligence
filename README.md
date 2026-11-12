@@ -26,7 +26,7 @@
 ![RetailIQ home page](reports/figures/dashboard/01_home.png)
 | Customer Intelligence | Product and Basket |
 | --- | --- |
-| ![Customer Intelligence](reports/figures/dashboard/02_customer_intelligence.png) | ![Product and Basket](reports/figures/dashboard/03_product_basket.png) |
+| ![Customer Intelligence](reports/figures/dashboard/02_customer_intelligence.png) | ![Product and Basket](reports/figures/dashboard/03_product_and_basket.png) |
 
 | Anomaly Monitor | Revenue Forecasting |
 | --- | --- |
