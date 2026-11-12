@@ -27,6 +27,7 @@ from dashboard.utils.data_loader import (
     load_market_basket_summary,
     load_product_lifecycle,
 )
+from dashboard.utils.ui import render_footer, show_load_error
 
 
 st.set_page_config(
@@ -71,8 +72,7 @@ try:
     )
 
 except (FileNotFoundError, KeyError) as error:
-    st.error(str(error))
-    st.stop()
+    show_load_error(error, "the product and basket data")
 
 
 try:
@@ -787,3 +787,6 @@ with st.expander(
             width="stretch",
             hide_index=True,
         )
+
+
+render_footer()

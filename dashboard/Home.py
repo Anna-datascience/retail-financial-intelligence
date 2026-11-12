@@ -38,6 +38,7 @@ from dashboard.utils.data_loader import (
     load_market_basket_rules,
     load_product_lifecycle,
 )
+from dashboard.utils.ui import render_footer, show_load_error
 
 
 # --------------------------------------------------
@@ -82,11 +83,7 @@ except (
     KeyError,
     ValueError
 ) as error:
-    st.error(
-        "RetailIQ analytical artifacts could "
-        f"not be loaded: {error}"
-    )
-    st.stop()
+    show_load_error(error, "the dashboard data")
 
 
 # --------------------------------------------------
@@ -686,71 +683,57 @@ st.dataframe(
 
 
 # --------------------------------------------------
-# Module status
+# Explore the dashboard
 # --------------------------------------------------
 
-st.subheader("Platform modules")
+st.subheader("Explore the dashboard")
 
-module_status = pd.DataFrame([
-    {
-        "Module": "Data Quality",
-        "Method": (
-            "Rule-based validation and audit flags"
-        ),
-        "Status": "Complete"
-    },
-    {
-        "Module": "Customer Intelligence",
-        "Method": (
-            "RFM features and K-Means clustering"
-        ),
-        "Status": "Complete"
-    },
-    {
-        "Module": "Product Intelligence",
-        "Method": (
-            "ABC analysis and product lifecycle"
-        ),
-        "Status": "Complete"
-    },
-    {
-        "Module": "Market Basket",
-        "Method": (
-            "Association rules"
-        ),
-        "Status": "Complete"
-    },
-    {
-        "Module": "Anomaly Detection",
-        "Method": (
-            "Isolation Forest ensemble and "
-            "financial rules"
-        ),
-        "Status": "Complete"
-    },
-    {
-        "Module": "Revenue Forecasting",
-        "Method": (
-            "Baseline, XGBoost and LSTM comparison"
-        ),
-        "Status": "Complete"
-    },
-    {
-        "Module": "Business Recommendations",
-        "Method": (
-            "Cross-module decision layer"
-        ),
-        "Status": "Complete"
-    }
-])
+DASHBOARD_PAGES = [
+    (
+        "pages/01_customer_intelligence.py",
+        "Customer Intelligence",
+        "🎯",
+        "Which customers are valuable, active or inactive?",
+        "RFM features and K-Means segmentation",
+    ),
+    (
+        "pages/02_product_and_basket.py",
+        "Product and Basket",
+        "🛒",
+        "Which products drive revenue, sell together or look inactive?",
+        "ABC analysis, product lifecycle and association rules",
+    ),
+    (
+        "pages/03_anomaly_monitor.py",
+        "Anomaly Monitor",
+        "🚨",
+        "Which invoices need a financial or operational review first?",
+        "Isolation Forest ensemble and financial rules",
+    ),
+    (
+        "pages/04_revenue_forecast.py",
+        "Revenue Forecasting",
+        "📈",
+        "What daily revenue should the business expect over the next 30 days?",
+        "Same-weekday baseline, XGBoost and LSTM comparison",
+    ),
+    (
+        "pages/05_business_recommendations.py",
+        "Business Recommendations",
+        "💡",
+        "Which actions should Finance, Operations and Merchandising prioritise?",
+        "Cross-module decision layer",
+    ),
+]
 
-st.dataframe(
-    module_status,
-    hide_index=True,
-    width="stretch"
-)
+page_columns = st.columns(2)
 
-st.success(
-    "RetailIQ analytical workflow and dashboard "
-    "integration are complete."
-)
+for position, (path, label, icon, question, method) in enumerate(DASHBOARD_PAGES):
+    with page_columns[position % 2]:
+        with st.container(border=True):
+            st.page_link(path, label=f"**{label}**", icon=icon)
+            st.write(question)
+            st.caption(f"Method: {method}")
+
+
+render_footer()

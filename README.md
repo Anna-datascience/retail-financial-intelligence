@@ -176,7 +176,7 @@ The Streamlit app has five pages:
 ```text
 retail-financial-intelligence/
 |-- dashboard/
-|   |-- app.py
+|   |-- Home.py
 |   |-- pages/
 |   `-- utils/
 |-- data/
@@ -221,7 +221,7 @@ Validate the dashboard artifacts, then start the app:
 
 ```bash
 python scripts/validate_dashboard_artifacts.py
-python -m streamlit run dashboard/app.py --browser.gatherUsageStats false
+python -m streamlit run dashboard/Home.py --browser.gatherUsageStats false
 ```
 
 If PowerShell blocks activation, select the interpreter in VS Code or call `.\.venv\Scripts\python.exe` directly.
@@ -241,7 +241,7 @@ If PowerShell blocks activation, select the interpreter in VS Code or call `.\.v
 
 ```text
 retail-financial-intelligence/
-├── dashboard/        # Streamlit app (app.py, pages/, utils/)
+├── dashboard/        # Streamlit app (Home.py, pages/, utils/)
 ├── data/
 │   ├── raw/          # Local source data (not committed)
 │   └── processed/    # Generated analytical datasets
@@ -253,6 +253,7 @@ retail-financial-intelligence/
 │   ├── figures/
 │   └── tables/
 ├── scripts/          # Validation and reproducibility utilities
+├── tests/            # Dashboard smoke tests (run in CI)
 ├── sql/              # PostgreSQL schema, load script and business queries
 ├── src/              # Reusable Python modules
 ├── requirements.txt
@@ -302,7 +303,7 @@ psql -d retailiq -f sql/analytics_queries.sql
 - [x] PostgreSQL star-style schema and reusable business queries (`sql/`)
 - [ ] Database-backed dashboard loaders
 - [x] CI check: artifact validation on every push
-- [ ] Extend CI with a dashboard smoke test
+- [x] Dashboard smoke test in CI (every page renders without errors)
 - [ ] Containerise with Docker
 - [ ] Model and data-drift monitoring before any production use
 
