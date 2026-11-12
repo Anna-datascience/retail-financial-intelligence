@@ -21,7 +21,16 @@
 | --- | --- |
 | ![30-day forecast](reports/figures/revenue_forecasting/future_30_day_revenue_forecast.png) | ![Product association network](reports/figures/market_basket/product_association_network.png) |
 
-<!-- Tip: add 1-2 screenshots of the live Streamlit dashboard to reports/figures/dashboard/ and show them here. -->
+### Dashboard preview
+
+![RetailIQ home page](reports/figures/dashboard/01_home.png)
+| Customer Intelligence | Product and Basket |
+| --- | --- |
+| ![Customer Intelligence](reports/figures/dashboard/02_customer_intelligence.png) | ![Product and Basket](reports/figures/dashboard/03_product_basket.png) |
+
+| Anomaly Monitor | Revenue Forecasting |
+| --- | --- |
+| ![Anomaly Monitor](reports/figures/dashboard/04_anomaly_monitor.png) | ![Revenue Forecasting](reports/figures/dashboard/05_revenue_forecast.png) |
 
 ---
 
