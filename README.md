@@ -9,7 +9,7 @@
 **RetailIQ turns 1 million+ retail transactions into decisions for Finance, Customer Operations and Merchandising:** customer segments, product and basket insights, a prioritised invoice-review queue, and a 30-day revenue forecast, all in an interactive dashboard.
 
 > **Live demo:** [RetailIQ dashboard on Streamlit Cloud](https://retail-financial-intelligence-jzx9zmz4qskeqiirwzgays.streamlit.app/)  
-> **Status:** analytics, dashboard , PostgreSQL layer and Cloud deployment complete. Next:  database-backed dashboard loaders, containerisation and monitoring  (see [Roadmap](#roadmap)).
+> **Status:** analytics, dashboard, PostgreSQL layer and cloud deployment complete. Next: database-backed dashboard loaders, containerisation and monitoring (see [Roadmap](#roadmap)).
 
 ### Preview
 
