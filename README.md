@@ -8,8 +8,8 @@
 
 **RetailIQ turns 1 million+ retail transactions into decisions for Finance, Customer Operations and Merchandising:** customer segments, product and basket insights, a prioritised invoice-review queue, and a 30-day revenue forecast, all in an interactive dashboard.
 
-> **Live demo:** `[add Streamlit Community Cloud link here]`  
-> **Status:** analytics, dashboard and PostgreSQL layer complete. Cloud deployment and database-backed dashboard loaders are the next phases (see [Roadmap](#roadmap)).
+> **Live demo:** [RetailIQ dashboard on Streamlit Cloud](https://retail-financial-intelligence-jzx9zmz4qskeqiirwzgays.streamlit.app/)  
+> **Status:** analytics, dashboard , PostgreSQL layer and Cloud deployment complete. Next:  database-backed dashboard loaders, containerisation and monitoring  (see [Roadmap](#roadmap)).
 
 ### Preview
 
@@ -273,8 +273,9 @@ The `sql/` folder contains a star-style PostgreSQL layer built from the cleaned 
 
 ```bash
 createdb retailiq
-psql -d retailiq -f sql/schema.sql
-psql -d retailiq -f sql/load_data.sql      # see the comments in the file for the one-time CSV preparation
+python scripts/export_for_postgres.py      # creates the CSV files in data/processed/sql_export/
+psql -d retailiq -f sql/schema.sql         # creates the empty tables
+psql -d retailiq -f sql/load_data.sql      # loads the data
 psql -d retailiq -f sql/analytics_queries.sql
 ```
 
@@ -298,8 +299,8 @@ psql -d retailiq -f sql/analytics_queries.sql
 - [x] EDA, segmentation, market-basket analysis
 - [x] Anomaly detection and invoice case queue
 - [x] Revenue forecasting (baseline, XGBoost, LSTM)
-- [x] Streamlit dashboard (local)
-- [ ] Deploy the dashboard (Streamlit Community Cloud) and add the live link
+- [x] Streamlit dashboard  
+- [x] Deployed on Streamlit Community Cloud ([live demo](https://retail-financial-intelligence-jzx9zmz4qskeqiirwzgays.streamlit.app/))
 - [x] PostgreSQL star-style schema and reusable business queries (`sql/`)
 - [ ] Database-backed dashboard loaders
 - [x] CI check: artifact validation on every push
